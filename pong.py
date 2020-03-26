@@ -31,7 +31,58 @@ ball.shape('square')
 ball.color('white')
 ball.penup()
 ball.goto(0, 0)
+ball.dx = 0.3
+ball.dy = 0.3
+
+# functions
+def padddle_left_up():
+  y = paddle_left.ycor()
+  y += 20
+  paddle_left.sety(y)
+
+def padddle_left_down():
+  y = paddle_left.ycor()
+  y -= 20
+  paddle_left.sety(y)
+
+def padddle_right_up():
+  y = paddle_right.ycor()
+  y += 20
+  paddle_right.sety(y)
+
+def padddle_right_down():
+  y = paddle_right.ycor()
+  y -= 20
+  paddle_right.sety(y)
+
+# Keyboard binding
+wn.listen()
+wn.onkeypress(padddle_left_up, "w")
+wn.onkeypress(padddle_left_down, "s")
+
+wn.onkeypress(padddle_right_up, "o")
+wn.onkeypress(padddle_right_down, "l")
 
 # Main game loop
 while True:
   wn.update()
+  # Move the ball
+  ball.setx(ball.xcor() + ball.dx)
+  ball.sety(ball.ycor() + ball.dy)
+
+  # Border checking
+  if ball.ycor() > 390:
+    ball.sety(390)
+    ball.dy *= -1
+
+  if ball.ycor() < -390:
+    ball.sety(-390)
+    ball.dy *= -1
+
+  if ball.xcor() > 390:
+    ball.goto(0, 0)
+    ball.dx *= -1
+
+  if ball.xcor() < -390:
+    ball.goto(0, 0)
+    ball.dx *= -1
