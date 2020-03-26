@@ -1,88 +1,124 @@
 import turtle
 
 wn = turtle.Screen()
-wn.title('Pong by Stephen Axtell')
-wn.bgcolor('black')
-wn.setup(width=800, height=800)
-wn.tracer(0) # stops window auto updating
+wn.title("Pong")
+wn.bgcolor("black")
+wn.setup(width=800, height=600)
+wn.tracer(0)
 
-# paddle left
-paddle_left = turtle.Turtle()
-paddle_left.speed(0)
-paddle_left.shape('square')
-paddle_left.color('white')
-paddle_left.shapesize(stretch_wid=5, stretch_len=1)
-paddle_left.penup()
-paddle_left.goto(-350, 0)
+# Score
+score_a = 0
+score_b = 0
 
-# paddle right
-paddle_right = turtle.Turtle()
-paddle_right.speed(0)
-paddle_right.shape('square')
-paddle_right.color('white')
-paddle_right.shapesize(stretch_wid=5, stretch_len=1)
-paddle_right.penup()
-paddle_right.goto(350, 0)
+# Paddle A
+paddle_a = turtle.Turtle()
+paddle_a.speed(0)
+paddle_a.shape("square")
+paddle_a.color("white")
+paddle_a.shapesize(stretch_wid=5, stretch_len=1)
+paddle_a.penup()
+paddle_a.goto(-350, 0)
 
-# ball
+# Paddle B
+paddle_b = turtle.Turtle()
+paddle_b.speed(0)
+paddle_b.shape("square")
+paddle_b.color("white")
+paddle_b.shapesize(stretch_wid=5, stretch_len=1)
+paddle_b.penup()
+paddle_b.goto(350, 0)
+
+# Ball
 ball = turtle.Turtle()
 ball.speed(0)
-ball.shape('square')
-ball.color('white')
+ball.shape("square")
+ball.color("white")
 ball.penup()
 ball.goto(0, 0)
 ball.dx = 0.3
 ball.dy = 0.3
 
-# functions
-def padddle_left_up():
-  y = paddle_left.ycor()
+
+
+
+# Functions
+
+# so paddle doest not go through wall
+def paddle_wall_check(y):
+  if y > 250:
+    y = 250
+  elif y < -250:
+    y = -250
+  return y
+
+def paddle_a_up():
+  y = paddle_a.ycor()
   y += 20
-  paddle_left.sety(y)
+  paddle_a.sety(paddle_wall_check(y))
 
-def padddle_left_down():
-  y = paddle_left.ycor()
+
+def paddle_a_down():
+  y = paddle_a.ycor()
   y -= 20
-  paddle_left.sety(y)
+  paddle_a.sety(paddle_wall_check(y))
 
-def padddle_right_up():
-  y = paddle_right.ycor()
+
+def paddle_b_up():
+  y = paddle_b.ycor()
   y += 20
-  paddle_right.sety(y)
+  paddle_b.sety(paddle_wall_check(y))
 
-def padddle_right_down():
-  y = paddle_right.ycor()
+
+def paddle_b_down():
+  y = paddle_b.ycor()
   y -= 20
-  paddle_right.sety(y)
+  paddle_b.sety(paddle_wall_check(y))
 
-# Keyboard binding
+
+# Keyboard bindings
 wn.listen()
-wn.onkeypress(padddle_left_up, "w")
-wn.onkeypress(padddle_left_down, "s")
-
-wn.onkeypress(padddle_right_up, "o")
-wn.onkeypress(padddle_right_down, "l")
+wn.onkeypress(paddle_a_up, "w")
+wn.onkeypress(paddle_a_down, "s")
+wn.onkeypress(paddle_b_up, "o")
+wn.onkeypress(paddle_b_down, "l")
 
 # Main game loop
 while True:
   wn.update()
+
   # Move the ball
   ball.setx(ball.xcor() + ball.dx)
   ball.sety(ball.ycor() + ball.dy)
 
   # Border checking
-  if ball.ycor() > 390:
-    ball.sety(390)
+
+  # Top and bottom
+  if ball.ycor() > 290:
+    ball.sety(290)
     ball.dy *= -1
 
-  if ball.ycor() < -390:
-    ball.sety(-390)
+  elif ball.ycor() < -290:
+    ball.sety(-290)
     ball.dy *= -1
 
-  if ball.xcor() > 390:
+  # Left and right
+  if ball.xcor() > 350:
+    score_a += 1
+    pen.clear()
+    pen.write("Player A: {}  Player B: {}".format(score_a, score_b), align="center", font=("Courier", 24, "normal"))
     ball.goto(0, 0)
     ball.dx *= -1
 
-  if ball.xcor() < -390:
+  elif ball.xcor() < -350:
+    score_b += 1
+    pen.clear()
+    pen.write("Player A: {}  Player B: {}".format(score_a, score_b), align="center", font=("Courier", 24, "normal"))
     ball.goto(0, 0)
+    ball.dx *= -1
+
+  # Paddle and ball collisions
+  if ball.xcor() < -340 and ball.ycor() < paddle_a.ycor() + 50 and ball.ycor() > paddle_a.ycor() - 50:
+    ball.dx *= -1
+
+  elif ball.xcor() > 340 and ball.ycor() < paddle_b.ycor() + 50 and ball.ycor() > paddle_b.ycor() - 50:
     ball.dx *= -1
